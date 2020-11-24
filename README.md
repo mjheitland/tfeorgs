@@ -2,6 +2,10 @@
 
 Terraform templates to deal with TF Organizations
 
+## Lambda functions
+
++ create_tfe_org
+
 ## TF API calls 
 [TF Cloud API - Organizations](https://www.terraform.io/docs/cloud/api/organizations.html)
 Generate a TFE API token under "User Settings/Token" and assign it to "TOKEN".
