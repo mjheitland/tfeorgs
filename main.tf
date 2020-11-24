@@ -18,8 +18,9 @@ data "archive_file" "create_tfe_org" {
 #-------------------
 
 locals {
-  region  = data.aws_region.current.name
-  account = data.aws_caller_identity.current.account_id
+  region       = data.aws_region.current.name
+  account      = data.aws_caller_identity.current.account_id
+  project_name = "tfeorgs"
 }
 
 
@@ -28,11 +29,11 @@ locals {
 #-------------------
 
 resource "aws_iam_role" "lambda_logging" {
-    name = format("%s_lambda_logging", var.project_name)
+    name = format("%s_lambda_logging", locals.project_name)
 
     tags = { 
-      Name = format("%s_lambda_logging", var.project_name)
-      project_name = var.project_name
+      Name = format("%s_lambda_logging", locals.project_name)
+      project_name = locals.project_name
     }
 
     assume_role_policy = <<POLICY
@@ -106,7 +107,7 @@ resource "aws_lambda_function" "create_tfe_org" {
 #  }
 
   tags = { 
-    Name = format("%s_create_tfe_org", var.project_name)
-    project_name = var.project_name
+    Name = format("%s_create_tfe_org", locals.project_name)
+    project_name = locals.project_name
   }
 }
