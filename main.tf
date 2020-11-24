@@ -25,7 +25,7 @@ locals {
 
 variable "TFE_API_TOKEN" { 
   type = string
-  ddescription = "TFE API Token is passed from TFE environment variable TF_VAR_TFE_API_TOKEN to allow lambda to access TFE" 
+  description = "TFE API Token is passed from TFE environment variable TF_VAR_TFE_API_TOKEN to allow lambda to access TFE" 
 }
 
 #-------------------
