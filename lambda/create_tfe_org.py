@@ -18,7 +18,7 @@ def lambda_handler(event, context):
         logger.info(f"user_email = {user_email}")
         environment = event["environment"]
         logger.info(f"environment = {environment}")
-        tfe_api_token = os.environ("TFE_API_TOKEN")
+        tfe_api_token = os.environ['TFE_API_TOKEN']
         logger.info(f"tfe_api_token: {tfe_api_token.sub[:10]}")
         logger.info("... finishing create_tfe_org.")
     except ClientError as e:
