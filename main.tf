@@ -86,7 +86,7 @@ POLICY
 resource "aws_lambda_function" "create_tfe_org" {
   filename          = "create_tfe_org.zip"
   function_name     = "create_tfe_org"
-  role              = aws_iam_role.create_tfe_org.arn
+  role              = aws_iam_role.lambda_logging.arn
   handler           = "create_tfe_org.lambda_handler"
   runtime           = "python3.8"
   description       = "A function to create a TFE org."
