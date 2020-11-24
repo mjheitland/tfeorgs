@@ -16,6 +16,17 @@ data "archive_file" "create_tfe_org" {
 #-------------------
 # Locals
 #-------------------
+
+variable "region" {
+  type = "string"
+  description = "AWS region we want to deploy to"  
+}
+
+variable "account" {
+  type = "string"
+  description = "AWS account we want to deploy to"  
+}
+
 locals {
   region  = data.aws_region.current.name
   account = data.aws_caller_identity.current.account_id
