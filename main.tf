@@ -14,7 +14,7 @@ data "archive_file" "create_tfe_org" {
 
 
 #-------------------
-# Locals
+# Locals and variables
 #-------------------
 
 locals {
@@ -29,11 +29,11 @@ locals {
 #-------------------
 
 resource "aws_iam_role" "lambda_logging" {
-    name = format("%s_lambda_logging", locals.project_name)
+    name = format("%s_lambda_logging", local.project_name)
 
     tags = { 
-      Name = format("%s_lambda_logging", locals.project_name)
-      project_name = locals.project_name
+      Name = format("%s_lambda_logging", local.project_name)
+      project_name = local.project_name
     }
 
     assume_role_policy = <<POLICY
@@ -107,7 +107,7 @@ resource "aws_lambda_function" "create_tfe_org" {
 #  }
 
   tags = { 
-    Name = format("%s_create_tfe_org", locals.project_name)
-    project_name = locals.project_name
+    Name = format("%s_create_tfe_org", local.project_name)
+    project_name = local.project_name
   }
 }
