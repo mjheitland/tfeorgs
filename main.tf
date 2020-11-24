@@ -23,6 +23,10 @@ locals {
   project_name = "tfeorgs"
 }
 
+variable "TFE_API_TOKEN" { 
+  type = string
+  ddescription = "TFE API Token is passed from TFE environment variable TF_VAR_TFE_API_TOKEN to allow lambda to access TFE" 
+}
 
 #-------------------
 # Roles and Policies
@@ -96,8 +100,9 @@ resource "aws_lambda_function" "create_tfe_org" {
 
   environment {
     variables = {
-      "account_id"  = local.account
-      "region"      = local.region
+      "account_id"    = local.account
+      "region"        = local.region
+      "tfe_api_token" = var.TFE_API_TOKEN
     }
   }
 
