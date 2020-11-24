@@ -102,7 +102,7 @@ resource "aws_lambda_function" "create_tfe_org" {
     variables = {
       "account_id"    = local.account
       "region"        = local.region
-      "tfe_api_token" = var.TFE_API_TOKEN
+      "TFE_API_TOKEN" = var.TFE_API_TOKEN
     }
   }
 
