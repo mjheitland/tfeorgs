@@ -3,6 +3,7 @@ import boto3
 import json
 import logging
 import os
+import requests
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -20,6 +21,10 @@ def lambda_handler(event, context):
         logger.info(f"environment = '{environment}'")
         tfe_api_token = os.environ['TFE_API_TOKEN']
         logger.info(f"tfe_api_token: '{tfe_api_token}[:10]...'")
+        
+        response = requests.get('https://w3schools.com/python/demopage.htm')
+        logger.info(response.text)        
+        
         logger.info("... finishing create_tfe_org.")
     except ClientError as e:
         logger.error("*** Error in create_tfe_org: {}".format(e))

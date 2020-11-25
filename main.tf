@@ -84,6 +84,25 @@ POLICY
 }
 
 
+#--------------
+# zipping layer
+#--------------
+
+resource "null_resource" "zip_layer" {
+  triggers = { build_number = timestamp() }
+  provisioner "local-exec" {
+    command = "zip -r my_lambda_layer.zip ./layers/python"
+  }
+}
+
+resource "aws_lambda_layer_version" "my_lambda_layer" {
+  filename            = "my_lambda_layer.zip"
+  layer_name          = "my_lambda_layer"
+  compatible_runtimes = ["python3.8"]
+  depends_on = [ null_resource.zip_layer ]  
+}
+
+
 #----------------
 # Lambda Function
 #----------------
@@ -97,6 +116,7 @@ resource "aws_lambda_function" "create_tfe_org" {
   description       = "A function to create a TFE org."
   source_code_hash  = data.archive_file.create_tfe_org.output_base64sha256
   timeout           = 30
+  layers            = [aws_lambda_layer_version.my_lambda_layer.arn]
 
   environment {
     variables = {
