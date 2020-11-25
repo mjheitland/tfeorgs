@@ -10,11 +10,12 @@ Terraform templates to deal with TF Organizations
 
 ## TF API calls 
 [TF Cloud API - Organizations](https://www.terraform.io/docs/cloud/api/organizations.html)
-Generate a TFE API token under "User Settings/Token" and assign it to "TOKEN".
-Set environment variables in TFE for
+Generate a TFE API token under "User Settings/Token" and assign it to env variable "TOKEN".
+Set environment variables in https://app.terraform.io/app/mjhorg1/workspaces/tfeorgs/variables for
 - AWS_ACCESS_KEY_ID
 - AWS_SECRET_ACCESS_KEY (tick 'sensitive')
 - AWS_DEFAULT_REGION
+- TFE_API_TOKEN (tick 'sensitive')
 
 ### List all organisations
 ```
