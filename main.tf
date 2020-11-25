@@ -90,7 +90,7 @@ POLICY
 
 data "archive_file" "zip_layer" {
   type        = "zip"
-  source_dir  = "./layers/python"
+  source_dir  = "./layers"
   output_path = "my_lambda_layer.zip"
 }
 
