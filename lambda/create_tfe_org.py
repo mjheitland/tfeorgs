@@ -20,7 +20,7 @@ def lambda_handler(event, context):
         environment = event["environment"]
         logger.info(f"environment = '{environment}'")
         tfe_api_token = os.environ['TFE_API_TOKEN']
-        logger.info(f"tfe_api_token: '{tfe_api_token}[:10]...'")
+        logger.info(f"tfe_api_token: '{tfe_api_token[:10]}...'")
         
         response = requests.get('https://w3schools.com/python/demopage.htm')
         logger.info(response.text)        

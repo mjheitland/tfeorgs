@@ -85,7 +85,7 @@ POLICY
 
 
 #--------------
-# zipping layer
+# Lambda Layer
 #--------------
 
 data "archive_file" "zip_layer" {
