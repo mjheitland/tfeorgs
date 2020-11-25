@@ -88,18 +88,18 @@ POLICY
 # zipping layer
 #--------------
 
-data "archive_file" "zip_layer" {
-  type        = "zip"
-  source_dir  = "./layers/python"
-  output_path = "my_lambda_layer.zip"
-}
+#data "archive_file" "zip_layer" {
+#  type        = "zip"
+#  source_dir  = "./layers/python"
+#  output_path = "my_lambda_layer.zip"
+#}
 
-resource "aws_lambda_layer_version" "my_lambda_layer" {
-  filename            = "my_lambda_layer.zip"
-  layer_name          = "my_lambda_layer"
-  compatible_runtimes = ["python3.8"]
-  source_code_hash    = data.archive_file.zip_layer.output_base64sha256
-}
+#resource "aws_lambda_layer_version" "my_lambda_layer" {
+#  filename            = "my_lambda_layer.zip"
+#  layer_name          = "my_lambda_layer"
+#  compatible_runtimes = ["python3.8"]
+#  source_code_hash    = data.archive_file.zip_layer.output_base64sha256
+#}
 
 
 #----------------
@@ -115,7 +115,7 @@ resource "aws_lambda_function" "create_tfe_org" {
   description       = "A function to create a TFE org."
   source_code_hash  = data.archive_file.create_tfe_org.output_base64sha256
   timeout           = 30
-  layers            = [aws_lambda_layer_version.my_lambda_layer.arn]
+  #layers            = [aws_lambda_layer_version.my_lambda_layer.arn]
 
   environment {
     variables = {
