@@ -3,7 +3,8 @@
 Terraform templates to deal with TF Organizations
 
 ## Lambda functions
-+ list_tfe_org
++ list_tfe_orgs
++ get_tfe_org
 + create_tfe_org
 + delete_tfe_org
 
