@@ -1,4 +1,5 @@
 from botocore.exceptions import ClientError
+import json
 import logging
 import os
 import requests
@@ -26,9 +27,19 @@ def lambda_handler(event, context):
         }
         tfe_url_trunk = 'https://app.terraform.io/api/v2/'
         tfe_url_method = tfe_url_trunk + 'organizations'
-        response = requests.get(
+        payload = {
+            "data": {
+                "type": "organizations",
+                "attributes": {
+                    "name": org_name,
+                    "email": user_email
+                }
+            }
+        }
+        response = requests.post(
             tfe_url_method,
             headers = headers,
+            data = json.dumps(payload),
             verify = True)
         data = response.json()['data']
         for item in data:
