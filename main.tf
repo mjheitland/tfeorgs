@@ -6,12 +6,6 @@ data "aws_region" "current" { }
 
 data "aws_caller_identity" "current" {}
 
-data "archive_file" "create_tfe_org" {
-  type        = "zip"
-  source_file = "./lambda/create_tfe_org.py"
-  output_path = "create_tfe_org.zip"
-}
-
 
 #-------------------
 # Locals and variables
@@ -106,6 +100,52 @@ resource "aws_lambda_layer_version" "my_lambda_layer" {
 # Lambda Function
 #----------------
 
+#--- list_tfe_orgs
+
+data "archive_file" "list_tfe_org" {
+  type        = "zip"
+  source_file = "./lambda/list_tfe_org.py"
+  output_path = "list_tfe_org.zip"
+}
+
+resource "aws_lambda_function" "list_tfe_org" {
+  filename          = "list_tfe_org.zip"
+  function_name     = "list_tfe_org"
+  role              = aws_iam_role.lambda_logging.arn
+  handler           = "list_tfe_org.lambda_handler"
+  runtime           = "python3.8"
+  description       = "A function to list a TFE org."
+  source_code_hash  = data.archive_file.list_tfe_org.output_base64sha256
+  timeout           = 30
+  layers            = [aws_lambda_layer_version.my_lambda_layer.arn]
+
+  environment {
+    variables = {
+      "account_id"    = local.account
+      "region"        = local.region
+      "TFE_API_TOKEN" = var.TFE_API_TOKEN
+    }
+  }
+
+#  vpc_config {
+#    subnet_ids         = var.subprv_ids
+#    security_group_ids = aws_security_group.sg_log_event.*.id
+#  }
+
+  tags = { 
+    Name = format("%s_list_tfe_org", local.project_name)
+    project_name = local.project_name
+  }
+}
+
+#--- create_tfe_org
+
+data "archive_file" "create_tfe_org" {
+  type        = "zip"
+  source_file = "./lambda/create_tfe_org.py"
+  output_path = "create_tfe_org.zip"
+}
+
 resource "aws_lambda_function" "create_tfe_org" {
   filename          = "create_tfe_org.zip"
   function_name     = "create_tfe_org"
@@ -132,6 +172,44 @@ resource "aws_lambda_function" "create_tfe_org" {
 
   tags = { 
     Name = format("%s_create_tfe_org", local.project_name)
+    project_name = local.project_name
+  }
+}
+
+#--- delete_tfe_org
+
+data "archive_file" "delete_tfe_org" {
+  type        = "zip"
+  source_file = "./lambda/delete_tfe_org.py"
+  output_path = "delete_tfe_org.zip"
+}
+
+resource "aws_lambda_function" "delete_tfe_org" {
+  filename          = "delete_tfe_org.zip"
+  function_name     = "delete_tfe_org"
+  role              = aws_iam_role.lambda_logging.arn
+  handler           = "delete_tfe_org.lambda_handler"
+  runtime           = "python3.8"
+  description       = "A function to delete a TFE org."
+  source_code_hash  = data.archive_file.delete_tfe_org.output_base64sha256
+  timeout           = 30
+  layers            = [aws_lambda_layer_version.my_lambda_layer.arn]
+
+  environment {
+    variables = {
+      "account_id"    = local.account
+      "region"        = local.region
+      "TFE_API_TOKEN" = var.TFE_API_TOKEN
+    }
+  }
+
+#  vpc_config {
+#    subnet_ids         = var.subprv_ids
+#    security_group_ids = aws_security_group.sg_log_event.*.id
+#  }
+
+  tags = { 
+    Name = format("%s_delete_tfe_org", local.project_name)
     project_name = local.project_name
   }
 }

@@ -3,8 +3,9 @@
 Terraform templates to deal with TF Organizations
 
 ## Lambda functions
-
++ list_tfe_org
 + create_tfe_org
++ delete_tfe_org
 
 ## TF API calls 
 [TF Cloud API - Organizations](https://www.terraform.io/docs/cloud/api/organizations.html)

@@ -9,14 +9,14 @@ logger.setLevel(logging.INFO)
 def lambda_handler(event, context):
     try:  
         # log event and extract its parameters
-        logger.info("Starting create_tfe_org ...")
+        logger.info("Starting list_tfe_orgs ...")
         logger.info(f"event = '{event}'")
-        org_name = event["org_name"]
-        logger.info(f"org_name = '{org_name}'")
-        user_email = event["user_email"]
-        logger.info(f"user_email = '{user_email}'")
-        environment = event["environment"]
-        logger.info(f"environment = '{environment}'")
+        org_name = ''
+        try:
+            org_name = event["org_name"]
+            logger.info(f"org_name = '{org_name}'")
+        except:
+            pass
         tfe_api_token = os.environ['TFE_API_TOKEN']
         logger.info(f"tfe_api_token: '{tfe_api_token[:10]}...'")
         
@@ -25,7 +25,7 @@ def lambda_handler(event, context):
             'content-type': 'application/vnd.api+json',
         }
         tfe_url_trunk = 'https://app.terraform.io/api/v2/'
-        tfe_url_method = tfe_url_trunk + 'organizations'
+        tfe_url_method = tfe_url_trunk + 'organizations/' + org_name
         response = requests.get(
             tfe_url_method,
             headers = headers,
@@ -34,8 +34,8 @@ def lambda_handler(event, context):
         for item in data:
             logger.info(item['id'])
 
-        logger.info("... finishing create_tfe_org.")
+        logger.info("... finishing list_tfe_orgs.")
 
     except ClientError as e:
-        logger.error("*** Error in create_tfe_org: {}".format(e))
+        logger.error("*** Error in list_tfe_orgs: {}".format(e))
         raise
