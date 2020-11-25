@@ -100,7 +100,7 @@ resource "aws_lambda_layer_version" "my_lambda_layer" {
 # Lambda Function
 #----------------
 
-#--- list_tfe_orgs
+#--- list_tfe_org
 
 data "archive_file" "list_tfe_org" {
   type        = "zip"
