@@ -41,9 +41,7 @@ def lambda_handler(event, context):
             headers = headers,
             data = json.dumps(payload),
             verify = True)
-        data = response.json()['data']
-        for item in data:
-            logger.info(item['id'])
+        logger.info(response.json())
 
         logger.info("... finishing create_tfe_org.")
 
