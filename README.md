@@ -15,7 +15,7 @@ Set environment variables in https://app.terraform.io/app/mjhorg1/workspaces/tfe
 - AWS_ACCESS_KEY_ID
 - AWS_SECRET_ACCESS_KEY (tick 'sensitive')
 - AWS_DEFAULT_REGION
-- TFE_API_TOKEN (tick 'sensitive')
+- TF_VAR_TFE_API_TOKEN (tick 'sensitive')
 
 ### List all organisations
 ```
