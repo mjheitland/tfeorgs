@@ -20,6 +20,7 @@ Terraform templates to automate creation of TFE Organizations and TFE Workspaces
 - AWS_SECRET_ACCESS_KEY (tick 'sensitive')
 - AWS_DEFAULT_REGION
 - TF_VAR_TFE_API_TOKEN (tick 'sensitive')
+- TF_VAR_GHE_API_TOKEN (i.e. GHE Personal Access Token, tick 'sensitive')
 
 ## TFE API calls 
 

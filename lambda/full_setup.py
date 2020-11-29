@@ -28,6 +28,8 @@ def lambda_handler(event, context):
         logger.info(f"workspace_name = '{workspace_name}'")
         tfe_api_token = os.environ['TFE_API_TOKEN']
         logger.info(f"tfe_api_token: '{tfe_api_token[:10]}...'")
+        ghe_api_token = os.environ['GHE_API_TOKEN'] # i.e. GHE Personal Access Token
+        logger.info(f"ghe_api_token: '{ghe_api_token[:10]}...'")
         
         headers = { 
             'authorization': 'Bearer ' + tfe_api_token,
@@ -69,6 +71,47 @@ def lambda_handler(event, context):
             if response.status_code != HTTP_CREATED:
                 raise Exception(f"Couldn't create org '{org_name}': {response.json()}")
             logger.info(f"... TFE org '{org_name}' created.")
+
+        # create OAuth client if it does not exist
+        tfe_url_method = f"{TFE_URL_TRUNK}/organizations/{org_name}/oauth-clients"
+        response = requests.get(
+            tfe_url_method,
+            headers = headers,
+            verify = True)
+        logger.info(f"status_code: {response.status_code}")
+        logger.info(response.json())
+        if response.status_code not in [HTTP_OK]:
+            raise Exception(f"Get TFE OAuth clients call failed for workspace '{org_name}/{workspace_name}': {response.json()}")
+        data = response.json()['data']
+        logger.info(data)
+        if len(data) > 0:
+            logger.info(f"TFE OAuth Client for '{org_name}/{workspace_name}' already exists.")
+        else:
+            logger.info(f"TFE OAuth client for '{org_name}/{workspace_name}' does not exist")
+            logger.info(f"Creating TFE OAuth client for '{org_name}/{workspace_name}' ...")
+            tfe_url_method = f"{TFE_URL_TRUNK}/organizations/{org_name}/oauth-clients"
+            payload = {
+                "data": {
+                    "type": "oauth-clients",
+                    "attributes": {
+                        "service-provider": "github",
+                        "http-url": "https://github.com",
+                        "api-url": "https://api.github.com",
+                        "oauth-token-string": ghe_api_token
+                    }
+                }
+            }
+            response = requests.post(
+                tfe_url_method,
+                headers = headers,
+                data = json.dumps(payload),
+                verify = True)
+            logger.info(f"status_code: {response.status_code}")
+            logger.info(response.json())
+            if response.status_code != HTTP_CREATED:
+                raise Exception(f"Couldn't create OAuth client for '{org_name}/{workspace_name}': {response.json()}")
+            logger.info(f"... TFE OAuth client for '{org_name}/{workspace_name}' created.")
+        return
 
         # create workspace if it does not exist
         tfe_url_method = f"{TFE_URL_TRUNK}/organizations/{org_name}/workspaces/{workspace_name}"
