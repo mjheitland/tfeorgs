@@ -251,3 +251,42 @@ resource "aws_lambda_function" "delete_tfe_org" {
     project_name = local.project_name
   }
 }
+
+
+#--- full_setup: create tfe org if it does not exist, add a workspace, connect it to GitHub, add TFE vars
+
+data "archive_file" "full_setup" {
+  type        = "zip"
+  source_file = "./lambda/full_setup.py"
+  output_path = "full_setup.zip"
+}
+
+resource "aws_lambda_function" "full_setup" {
+  filename          = "full_setup.zip"
+  function_name     = "full_setup"
+  role              = aws_iam_role.lambda_logging.arn
+  handler           = "full_setup.lambda_handler"
+  runtime           = "python3.8"
+  description       = "A function to create a TFE org."
+  source_code_hash  = data.archive_file.full_setup.output_base64sha256
+  timeout           = 30
+  layers            = [aws_lambda_layer_version.my_lambda_layer.arn]
+
+  environment {
+    variables = {
+      "account_id"    = local.account
+      "region"        = local.region
+      "TFE_API_TOKEN" = var.TFE_API_TOKEN
+    }
+  }
+
+#  vpc_config {
+#    subnet_ids         = var.subprv_ids
+#    security_group_ids = aws_security_group.sg_log_event.*.id
+#  }
+
+  tags = { 
+    Name = format("%s_full_setup", local.project_name)
+    project_name = local.project_name
+  }
+}
