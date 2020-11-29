@@ -7,6 +7,8 @@ import os
 import requests
 
 HTTP_OK = 200
+HTTP_NOT_FOUND = 404
+
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
@@ -39,8 +41,8 @@ def lambda_handler(event, context):
         logger.info(f"status_code: {response.status_code}")
         logger.info(response.json())
         if response.status_code == HTTP_OK:
-            logger.info(f"TFE org '{org_name}' does exist")
-        else:
+            logger.info(f"TFE org '{org_name}' already exists.")
+        elif response.status_code == HTTP_NOT_FOUND:
             logger.info(f"TFE org '{org_name}' does not exist")
             logger.info(f"Creating TFE org '{org_name}' ...")
             tfe_url_method = tfe_url_trunk + 'organizations'
@@ -64,6 +66,8 @@ def lambda_handler(event, context):
                 logger.info(f"... TFE org '{org_name}' created.")
             else:
                 logger.error(f"*** Error in full_setup: Couldn't create org '{org_name}': {response.json()}")
+        else:
+            logger.error(f"*** Error in full_setup: call failed to get org '{org_name}': {response.json()}")
 
         logger.info("... finishing full_setup.")
 
