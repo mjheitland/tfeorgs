@@ -17,6 +17,15 @@ Set environment variables in https://app.terraform.io/app/mjhorg1/workspaces/tfe
 - AWS_DEFAULT_REGION
 - TF_VAR_TFE_API_TOKEN (tick 'sensitive')
 
+Test event for full_setup lambda:
+```
+{
+  "org_name": "mjhorg0",
+  "user_email": "mjheitland@gmail.com",
+  "workspace_name": "dev"
+}
+```
+
 ### List all organisations
 ```
 curl \
