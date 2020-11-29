@@ -70,7 +70,7 @@ def lambda_handler(event, context):
             logger.info(f"... TFE org '{org_name}' created.")
 
         # create workspace if it does not exist
-        tfe_url_method = f"{TFE_URL_TRUNK}organizations/{org_name}/workspaces/{workspace_name}"
+        tfe_url_method = f"{TFE_URL_TRUNK}/organizations/{org_name}/workspaces/{workspace_name}"
         response = requests.get(
             tfe_url_method,
             headers = headers,
