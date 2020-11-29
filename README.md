@@ -1,12 +1,13 @@
 # tfeorgs
 
-Terraform templates to deal with TF Organizations
+Terraform templates to automate creation of TFE Organizations and TFE Workspaces
 
 ## Lambda functions
 + list_tfe_orgs
 + get_tfe_org
 + create_tfe_org
 + delete_tfe_org
++ full_setup (creates a TFE Organization with a TFE Workspace pointing to source in GitHub)
 
 ## TF API calls 
 [TF Cloud API - Organizations](https://www.terraform.io/docs/cloud/api/organizations.html)
