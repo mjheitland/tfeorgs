@@ -33,7 +33,7 @@ def lambda_handler(event, context):
         }
         tfe_url_trunk = 'https://app.terraform.io/api/v2/'
 
-        # check if a TFE org with org_name already exists; otherwise create it
+        # create TFE org if it does not exist
         tfe_url_method = tfe_url_trunk + 'organizations/' + org_name
         response = requests.get(
             tfe_url_method,
@@ -69,6 +69,29 @@ def lambda_handler(event, context):
             if response.status_code != HTTP_CREATED:
                 raise Exception(f"Couldn't create org '{org_name}': {response.json()}")
             logger.info(f"... TFE org '{org_name}' created.")
+
+        # create workspace if it does not exist
+        logger.info(f"TFE workspace '{org_name}/{workspace_name}' does not exist")
+        logger.info(f"Creating TFE workspace '{org_name}/{workspace_name}' ...")
+        tfe_url_method = tfe_url_trunk + f'organizations/{org_name}/workspaces'
+        payload = {
+            "data": {
+                "attributes": {
+                    "name": workspace_name
+                },
+                "type": "workspaces"
+            }
+        }
+        response = requests.post(
+            tfe_url_method,
+            headers = headers,
+            data = json.dumps(payload),
+            verify = True)
+        logger.info(f"status_code: {response.status_code}")
+        logger.info(response.json())
+        if response.status_code != HTTP_CREATED:
+            raise Exception(f"Couldn't create worksapce '{org_name}/{workspace_name}': {response.json()}")
+        logger.info(f"... TFE org '{org_name}/{workspace_name}' created.")
 
         logger.info("... finishing full_setup.")
 
