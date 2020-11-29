@@ -9,7 +9,7 @@ import requests
 HTTP_OK         = 200
 HTTP_CREATED    = 201
 HTTP_NOT_FOUND  = 404
-TF_VERSION      = "0.13.3"
+TF_VERSION      = "0.13.5"
 TFE_URL_TRUNK   = 'https://app.terraform.io/api/v2'
 
 logger = logging.getLogger()
