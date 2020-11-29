@@ -95,6 +95,7 @@ def lambda_handler(event, context):
                         "vcs-repo": {
                             "identifier": "mjheitland/tfeorgs",
                             "oauth-token-id": "",
+                            "ingress_submodules": True,
                             "branch": "",
                             "default-branch": true
                         }

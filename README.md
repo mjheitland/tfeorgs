@@ -17,6 +17,8 @@ Set environment variables in https://app.terraform.io/app/mjhorg1/workspaces/tfe
 - AWS_DEFAULT_REGION
 - TF_VAR_TFE_API_TOKEN (tick 'sensitive')
 
+### TFE Organizations
+
 Test event for full_setup lambda:
 ```
 {
@@ -26,7 +28,7 @@ Test event for full_setup lambda:
 }
 ```
 
-### List all organisations
+#### List all organisations
 ```
 curl \
   --header "Authorization: Bearer $TOKEN" \
@@ -35,7 +37,7 @@ curl \
   https://app.terraform.io/api/v2/organizations
 ```
 
-### Get organization's meta data
+#### Get organization's meta data
 ```
 curl \
   --header "Authorization: Bearer $TOKEN" \
@@ -44,14 +46,14 @@ curl \
   https://app.terraform.io/api/v2/organizations/mjhorg1
 ```
 
-### Create organization
+#### Create organization
 ```
 create-org-payload.json:
 {
   "data": {
     "type": "organizations",
     "attributes": {
-      "name": "mjhorg2",
+      "name": "mjhorg0",
       "email": "mjheitland@gmail.com"
     }
   }
@@ -63,11 +65,77 @@ curl \
   --request POST \
   --data @create-org-payload.json \
 ```
-### Delete organization
+#### Delete organization
 ```
 curl \
   --header "Authorization: Bearer $TOKEN" \
   --header "Content-Type: application/vnd.api+json" \
   --request DELETE \
   https://app.terraform.io/api/v2/organizations/mjhorg1
+```
+
+### TFE OAuth Clients (i.e. connection TFE-VCS)
+Pre-requisite: Create Github PAT in Github (Settings/Developer Settings/Personal Access Token, check 'repo')
+
+#### Create OAuth Client
+```
+create-oauth-client-payload.json
+{
+  "data": {
+    "type": "oauth-clients",
+    "attributes": {
+      "service-provider": "github",
+      "http-url": "https://github.com",
+      "api-url": "https://api.github.com",
+      "oauth-token-string": <GHE Personal Access Token>
+    }
+  }
+}
+
+curl \
+  --header "Authorization: Bearer $TOKEN" \
+  --header "Content-Type: application/vnd.api+json" \
+  --request POST \
+  --data @./create-oauth-client-payload.json \
+  https://app.terraform.io/api/v2/organizations/<org_name>/oauth-clients
+```
+
+#### Get OAuth Client
+```
+curl \
+  --header "Authorization: Bearer $TOKEN" \
+  --header "Content-Type: application/vnd.api+json" \
+  --request GET \
+  https://app.terraform.io/api/v2/organizations/mjhorg0/oauth-clients
+```
+
+### TFE Workspace
+
+#### Create TFE Workspace
+```
+create-workspace.json:
+{
+  "data": {
+    "attributes": {
+      "name": <workspace_name>,
+      "terraform_version": "0.13.3",
+      "working-directory": "",
+      "vcs-repo": {
+        "identifier": <Github project, e.g. mjheitland/tfeorgs>,
+        "oauth-token-id": <OAuth client token id, e.g. ot-oFVehjRewpmCMY7R>,
+        "branch": "",
+        "default-branch": true
+      }
+    },
+    "type": "workspaces"
+  }
+}
+```
+
+#### Get workspace
+```
+curl \
+  --header "Authorization: Bearer $TOKEN" \
+  --header "Content-Type: application/vnd.api+json" \
+  https://app.terraform.io/api/v2/organizations/<org_name>/workspaces/<workspace_name>
 ```
