@@ -6,6 +6,7 @@ import logging
 import os
 import requests
 
+HTTP_OK = 200
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
@@ -35,25 +36,32 @@ def lambda_handler(event, context):
             tfe_url_method,
             headers = headers,
             verify = True)
-        data = response.json()['data']
-        logger.info(data)
-
-        tfe_url_method = tfe_url_trunk + 'organizations'
-        payload = {
-            "data": {
-                "type": "organizations",
-                "attributes": {
-                    "name": org_name,
-                    "email": user_email
+        logger.info(response.json())
+        if response.status_code == HTTP_OK:
+            logger.info(f"TFE org '{org_name}' does exist")
+        else:
+            logger.info(f"TFE org '{org_name}' does not exist")
+            logger.info(f"Creating TFE org '{org_name}' ...")
+            tfe_url_method = tfe_url_trunk + 'organizations'
+            payload = {
+                "data": {
+                    "type": "organizations",
+                    "attributes": {
+                        "name": org_name,
+                        "email": user_email
+                    }
                 }
             }
-        }
-        response = requests.post(
-            tfe_url_method,
-            headers = headers,
-            data = json.dumps(payload),
-            verify = True)
-        logger.info(response.json())
+            response = requests.post(
+                tfe_url_method,
+                headers = headers,
+                data = json.dumps(payload),
+                verify = True)
+            logger.info(response.json())
+            if response.status_code == HTTP_OK:
+                logger.info(f"... TFE org '{org_name}' created.")
+            else:
+                logger.error(f"*** Error in full_setup: Couldn't create org '{org_name}': {response.json()}")
 
         logger.info("... finishing full_setup.")
 
