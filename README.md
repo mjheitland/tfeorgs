@@ -11,15 +11,17 @@ Terraform templates to automate creation of TFE Organizations and TFE Workspaces
 
 ## Pre-requisites
 
-1. Generate a TFE API token under "User Settings/Token" and assign it to env variable "TOKEN".
+1. Create PAT in Github (Settings/Developer Settings/Personal Access Token, check 'repo')
 
-2. Set environment variables in https://app.terraform.io/app/mjhorg1/workspaces/tfeorgs/variables for
+2. Generate a TFE API token under "User Settings/Token" and assign it to env variable "TOKEN".
+
+3. Set environment variables in https://app.terraform.io/app/mjhorg1/workspaces/tfeorgs/variables for
 - AWS_ACCESS_KEY_ID
 - AWS_SECRET_ACCESS_KEY (tick 'sensitive')
 - AWS_DEFAULT_REGION
 - TF_VAR_TFE_API_TOKEN (tick 'sensitive')
 
-## TF API calls 
+## TFE API calls 
 
 ### TFE Organizations
 
@@ -79,7 +81,6 @@ curl \
 ```
 
 ### TFE OAuth Clients (i.e. connection TFE-VCS)
-Pre-requisite: Create Github PAT in Github (Settings/Developer Settings/Personal Access Token, check 'repo')
 
 #### Create OAuth Client
 ```
@@ -145,4 +146,4 @@ curl \
 ```
 
 ## Links
-[TF Cloud API - Organizations](https://www.terraform.io/docs/cloud/api/organizations.html)
+[TFE Cloud API - Organizations](https://www.terraform.io/docs/cloud/api/organizations.html)
