@@ -9,14 +9,17 @@ Terraform templates to automate creation of TFE Organizations and TFE Workspaces
 + delete_tfe_org
 + full_setup (creates a TFE Organization with a TFE Workspace pointing to source in GitHub)
 
-## TF API calls 
-[TF Cloud API - Organizations](https://www.terraform.io/docs/cloud/api/organizations.html)
-Generate a TFE API token under "User Settings/Token" and assign it to env variable "TOKEN".
-Set environment variables in https://app.terraform.io/app/mjhorg1/workspaces/tfeorgs/variables for
+## Pre-requisites
+
+1. Generate a TFE API token under "User Settings/Token" and assign it to env variable "TOKEN".
+
+2. Set environment variables in https://app.terraform.io/app/mjhorg1/workspaces/tfeorgs/variables for
 - AWS_ACCESS_KEY_ID
 - AWS_SECRET_ACCESS_KEY (tick 'sensitive')
 - AWS_DEFAULT_REGION
 - TF_VAR_TFE_API_TOKEN (tick 'sensitive')
+
+## TF API calls 
 
 ### TFE Organizations
 
@@ -140,3 +143,6 @@ curl \
   --header "Content-Type: application/vnd.api+json" \
   https://app.terraform.io/api/v2/organizations/<org_name>/workspaces/<workspace_name>
 ```
+
+## Links
+[TF Cloud API - Organizations](https://www.terraform.io/docs/cloud/api/organizations.html)
