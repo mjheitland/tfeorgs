@@ -9,6 +9,7 @@ import requests
 HTTP_OK         = 200
 HTTP_CREATED    = 201
 HTTP_NOT_FOUND  = 404
+TFE_URL_TRUNK   = 'https://app.terraform.io/api/v2'
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -31,10 +32,9 @@ def lambda_handler(event, context):
             'authorization': 'Bearer ' + tfe_api_token,
             'content-type': 'application/vnd.api+json',
         }
-        tfe_url_trunk = 'https://app.terraform.io/api/v2/'
 
         # create TFE org if it does not exist
-        tfe_url_method = tfe_url_trunk + 'organizations/' + org_name
+        tfe_url_method = f"{TFE_URL_TRUNK}/organizations/{org_name}"
         response = requests.get(
             tfe_url_method,
             headers = headers,
@@ -43,13 +43,12 @@ def lambda_handler(event, context):
         logger.info(response.json())
         if response.status_code not in [HTTP_OK, HTTP_NOT_FOUND]:
             raise Exception(f"Get TFE org call failed for org '{org_name}': {response.json()}")
-
         if response.status_code == HTTP_OK:
             logger.info(f"TFE org '{org_name}' already exists.")
         elif response.status_code == HTTP_NOT_FOUND:
             logger.info(f"TFE org '{org_name}' does not exist")
             logger.info(f"Creating TFE org '{org_name}' ...")
-            tfe_url_method = tfe_url_trunk + 'organizations'
+            tfe_url_method = f"{TFE_URL_TRUNK}/organizations"
             payload = {
                 "data": {
                     "type": "organizations",
@@ -71,27 +70,39 @@ def lambda_handler(event, context):
             logger.info(f"... TFE org '{org_name}' created.")
 
         # create workspace if it does not exist
-        logger.info(f"TFE workspace '{org_name}/{workspace_name}' does not exist")
-        logger.info(f"Creating TFE workspace '{org_name}/{workspace_name}' ...")
-        tfe_url_method = tfe_url_trunk + f'organizations/{org_name}/workspaces'
-        payload = {
-            "data": {
-                "attributes": {
-                    "name": workspace_name
-                },
-                "type": "workspaces"
-            }
-        }
-        response = requests.post(
+        tfe_url_method = f"{TFE_URL_TRUNK}organizations/{org_name}/workspaces/{workspace_name}"
+        response = requests.get(
             tfe_url_method,
             headers = headers,
-            data = json.dumps(payload),
             verify = True)
         logger.info(f"status_code: {response.status_code}")
         logger.info(response.json())
-        if response.status_code != HTTP_CREATED:
-            raise Exception(f"Couldn't create worksapce '{org_name}/{workspace_name}': {response.json()}")
-        logger.info(f"... TFE org '{org_name}/{workspace_name}' created.")
+        if response.status_code not in [HTTP_OK, HTTP_NOT_FOUND]:
+            raise Exception(f"Get TFE workspace call failed for workspace '{org_name}/{workspace_name}': {response.json()}")
+        if response.status_code == HTTP_OK:
+            logger.info(f"TFE workspace '{org_name}/{workspace_name}' already exists.")
+        elif response.status_code == HTTP_NOT_FOUND:
+            logger.info(f"TFE workspace '{org_name}/{workspace_name}' does not exist")
+            logger.info(f"Creating TFE workspace '{org_name}/{workspace_name}' ...")
+            tfe_url_method = f"{TFE_URL_TRUNK}/organizations/{org_name}/workspaces"
+            payload = {
+                "data": {
+                    "attributes": {
+                        "name": workspace_name
+                    },
+                    "type": "workspaces"
+                }
+            }
+            response = requests.post(
+                tfe_url_method,
+                headers = headers,
+                data = json.dumps(payload),
+                verify = True)
+            logger.info(f"status_code: {response.status_code}")
+            logger.info(response.json())
+            if response.status_code != HTTP_CREATED:
+                raise Exception(f"Couldn't create worksapce '{org_name}/{workspace_name}': {response.json()}")
+            logger.info(f"... TFE org '{org_name}/{workspace_name}' created.")
 
         logger.info("... finishing full_setup.")
 
