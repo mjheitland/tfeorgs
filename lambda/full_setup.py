@@ -36,6 +36,7 @@ def lambda_handler(event, context):
             tfe_url_method,
             headers = headers,
             verify = True)
+        logger.info(f"status_code: {response.status_code}")
         logger.info(response.json())
         if response.status_code == HTTP_OK:
             logger.info(f"TFE org '{org_name}' does exist")
@@ -57,6 +58,7 @@ def lambda_handler(event, context):
                 headers = headers,
                 data = json.dumps(payload),
                 verify = True)
+            logger.info(f"status_code: {response.status_code}")
             logger.info(response.json())
             if response.status_code == HTTP_OK:
                 logger.info(f"... TFE org '{org_name}' created.")
