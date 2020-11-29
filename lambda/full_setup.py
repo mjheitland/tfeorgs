@@ -30,7 +30,7 @@ def lambda_handler(event, context):
         }
         tfe_url_trunk = 'https://app.terraform.io/api/v2/'
 
-        # check if a TFE org with org_name already exists
+        # check if a TFE org with org_name already exists; otherwise create it
         tfe_url_method = tfe_url_trunk + 'organizations/' + org_name
         response = requests.get(
             tfe_url_method,

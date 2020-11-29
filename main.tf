@@ -69,7 +69,7 @@ resource "aws_iam_role_policy" "lambda_logging" {
                 "logs:PutLogEvents"
             ],
             "Resource": [
-                "arn:aws:logs:${local.region}:${local.account}:log-group:/aws/lambda/log_event:*"
+                "arn:aws:logs:${local.region}:${local.account}:log-group:/aws/lambda/*:*"
             ]
         }
     ]
