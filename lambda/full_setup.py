@@ -88,7 +88,15 @@ def lambda_handler(event, context):
             payload = {
                 "data": {
                     "attributes": {
-                        "name": workspace_name
+                        "name": workspace_name,
+                        "terraform_version": TF_VERSION,
+                        "working-directory": "",
+                        "vcs-repo": {
+                            "identifier": "mjheitland/tfeorgs",
+                            "oauth-token-id": "",
+                            "branch": "",
+                            "default-branch": true
+                        }
                     },
                     "type": "workspaces"
                 }
