@@ -147,5 +147,40 @@ curl \
   https://app.terraform.io/api/v2/organizations/<org_name>/workspaces/<workspace_name>
 ```
 
+### TFE Workspace Variables
+
+#### Create Workspace Variable
+```
+variable.json:
+{
+  "data": {
+    "type":"vars",
+    "attributes": {
+      "key":"some_key",
+      "value":"some_value",
+      "description":"some description",
+      "category":"terraform",
+      "hcl":false,
+      "sensitive":false
+    }
+  }
+}
+
+curl \
+  --header "Authorization: Bearer $TOKEN" \
+  --header "Content-Type: application/vnd.api+json" \
+  --request POST \
+  --data @pvariable.json \
+  https://app.terraform.io/api/v2/workspaces/<workspace_id>/vars
+```
+
+#### List Workspace Variables
+```
+curl \
+  --header "Authorization: Bearer $TOKEN" \
+  --header "Content-Type: application/vnd.api+json" \
+"https://app.terraform.io/api/v2/workspaces/<workspace_id>/vars"
+```
+
 ## Links
 [TFE Cloud API - Organizations](https://www.terraform.io/docs/cloud/api/organizations.html)

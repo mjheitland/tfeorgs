@@ -129,10 +129,13 @@ def lambda_handler(event, context):
             verify = True)
         logger.info(f"status_code: {response.status_code}")
         logger.info(response.json())
+        workspace_id = ''
         if response.status_code not in [HTTP_OK, HTTP_NOT_FOUND]:
             raise Exception(f"Get TFE workspace call failed for workspace '{org_name}/{workspace_name}': {response.json()}")
         if response.status_code == HTTP_OK:
             logger.info(f"TFE workspace '{org_name}/{workspace_name}' already exists.")
+            workspace_id = response.json()["data"]["id"]
+            logger.info(f"workspace_id: {workspace_id}")
         elif response.status_code == HTTP_NOT_FOUND:
             logger.info(f"TFE workspace '{org_name}/{workspace_name}' does not exist")
             logger.info(f"Creating TFE workspace '{org_name}/{workspace_name}' ...")
@@ -163,7 +166,55 @@ def lambda_handler(event, context):
             logger.info(response.json())
             if response.status_code != HTTP_CREATED:
                 raise Exception(f"Couldn't create worksapce '{org_name}/{workspace_name}': {response.json()}")
+            workspace_id = response.json()["data"]["id"]
+            logger.info(f"workspace_id: {workspace_id}")
             logger.info(f"... TFE org '{org_name}/{workspace_name}' created.")
+
+        # create workspace variable if it does not exist
+        tfe_url_method = f"{TFE_URL_TRUNK}/workspaces/{workspace_id}/vars"
+        response = requests.get(
+            tfe_url_method,
+            headers = headers,
+            verify = True)
+        logger.info(f"status_code: {response.status_code}")
+        logger.info(response.json())
+        if response.status_code not in [HTTP_OK]:
+            raise Exception(f"Get TFE workspace variables call failed for workspace '{org_name}/{workspace_name}': {response.json()}")
+        data = response.json["data"]
+        if len(data) > 0:
+            logger.info(f"TFE workspace variables '{org_name}/{workspace_name}' already exist.")
+        else:
+            logger.info(f"TFE workspace variables '{org_name}/{workspace_name}' do not exist")
+            logger.info(f"Creating TFE workspace variables '{org_name}/{workspace_name}' ...")
+            tfe_url_method = f"{TFE_URL_TRUNK}/workspaces/{workspace_id}/vars"
+            var_key = 'TF_VAR_TFE_API_TOKEN'
+            var_value = tfe_api_token
+            var_description = 'Terraform API Token'
+            sensitive = True
+            hcl = True
+            payload = {
+                "data": {
+                    "type":"vars",
+                    "attributes": {
+                    "key":var_key,
+                    "value":var_value,
+                    "description":var_description,
+                    "category":"terraform",
+                    "hcl":hcl,
+                    "sensitive":sensitive
+                    }
+                }
+            }
+            response = requests.post(
+                tfe_url_method,
+                headers = headers,
+                data = json.dumps(payload),
+                verify = True)
+            logger.info(f"status_code: {response.status_code}")
+            logger.info(response.json())
+            if response.status_code != HTTP_CREATED:
+                raise Exception(f"Couldn't create worksapce variable {var_key} in '{org_name}/{workspace_name}': {response.json()}")
+            logger.info(f"... TFE workspace variable '{var_key}' in '{org_name}/{workspace_name}' created.")
 
         logger.info("... finishing full_setup.")
 
