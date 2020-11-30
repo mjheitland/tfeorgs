@@ -44,12 +44,13 @@ class TfeVariable():
     '''Helper class for passing external parameters to methods to avoid too-many-parameters-warning'''
     #pylint: disable=too-few-public-methods
     #pylint: disable=too-many-arguments
-    def __init__(self, var_key, var_value, var_description, hcl, sensitive) -> None:
+    def __init__(self, var_key, var_value, var_description, hcl, sensitive, category) -> None:
         self.var_key            = var_key
         self.var_value          = var_value
         self.var_description    = var_description
-        self.hcl                = hcl
-        self.sensitive          = sensitive
+        self.hcl                = hcl       # HCL type, e.g. list
+        self.sensitive          = sensitive # sensitive values get encrypted
+        self.category           = category  # either "terraform" or 'env'
 
 
 def lambda_handler(event, context):
@@ -85,7 +86,8 @@ def lambda_handler(event, context):
                 params.tfe_api_token,
                 'Terraform API token',
                 False,
-                True
+                True,
+                'env'
             )
         )
 
@@ -97,7 +99,8 @@ def lambda_handler(event, context):
                 params.ghe_api_token,
                 'GHE API token',
                 False,
-                True
+                True,
+                'env'
             )
         )
 
@@ -109,7 +112,8 @@ def lambda_handler(event, context):
                 os.environ['AWS_REGION'],
                 'AWS default region',
                 False,
-                False
+                False,
+                'env'
             )
         )
 
@@ -121,7 +125,8 @@ def lambda_handler(event, context):
                 os.environ['AWS_ACCESS_KEY_ID'],
                 'AWS access key',
                 False,
-                False
+                False,
+                'env'
             )
         )
 
@@ -133,7 +138,8 @@ def lambda_handler(event, context):
                 os.environ['AWS_SECRET_ACCESS_KEY'],
                 'AWS secret key',
                 False,
-                True
+                True,
+                'env'
             )
         )
 
@@ -321,7 +327,7 @@ def create_workspace_variable(params, workspace_id, tfe_var):
                 "key":tfe_var.var_key,
                 "value":tfe_var.var_value,
                 "description":tfe_var.var_description,
-                "category":"terraform",
+                "category":tfe_var.var_category,
                 "hcl":tfe_var.hcl,
                 "sensitive":tfe_var.sensitive
                 }

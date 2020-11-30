@@ -131,7 +131,7 @@ create-workspace.json:
         "identifier": <Github project, e.g. mjheitland/tfeorgs>,
         "oauth-token-id": <OAuth client token id, e.g. ot-oFVehjRewpmCMY7R>,
         "branch": "",
-        "default-branch": true
+        "default-branch": True
       }
     },
     "type": "workspaces"
@@ -159,9 +159,9 @@ variable.json:
       "key":"some_key",
       "value":"some_value",
       "description":"some description",
-      "category":"terraform",
-      "hcl":false,
-      "sensitive":false
+      "category":"env",
+      "hcl":False,
+      "sensitive":False
     }
   }
 }
