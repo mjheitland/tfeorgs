@@ -89,6 +89,18 @@ def lambda_handler(event, context):
             )
         )
 
+        create_workspace_variable(
+            params,
+            workspace_id,
+            TfeVariable(
+                'GHE_API_TOKEN',
+                params.ghe_api_token,
+                'GHE API token',
+                False,
+                True
+            )
+        )
+
         logger.info("... finishing full_setup.")
 
     except ClientError as ex:
@@ -153,7 +165,7 @@ def create_oauth_client(params):
     if len(data) > 0:
         logger.info(f"TFE OAuth Client for '{params.org_name}' already exists.")
         oauth_token_id = data[0]["relationships"]["oauth-tokens"]["data"][0]["id"]
-        logger.info(f"oauth_token_id: {params.oauth_token_id}")
+        logger.info(f"oauth_token_id: {oauth_token_id}")
     else:
         logger.info(f"TFE OAuth client for '{params.org_name}' does not exist")
         logger.info(f"Creating TFE OAuth client for '{params.org_name}' ...")
@@ -257,14 +269,14 @@ def create_workspace_variable(params, workspace_id, tfe_var):
     found_var_key = False
     if len(data) > 0:
         for data_item in data:
-            if data_item['attributes']['key'] == params.var_key:
+            if data_item['attributes']['key'] == tfe_var.var_key:
                 found_var_key = True
                 break
     if found_var_key:
-        logger.info(f"Variable '{params.var_key}' does already exist in '{params.org_name}/{params.workspace_name}'")
+        logger.info(f"Variable '{tfe_var.var_key}' does already exist in '{params.org_name}/{params.workspace_name}'")
     else:
-        logger.info(f"Variable '{params.var_key}' does not exist in '{params.org_name}/{params.workspace_name}'")
-        logger.info(f"Creating TFE workspace variables '{params.org_name}/{params.workspace_name}' ...")
+        logger.info(f"Variable '{tfe_var.var_key}' does not exist in '{params.org_name}/{params.workspace_name}'")
+        logger.info(f"Creating TFE workspace variable '{tfe_var.var_key}' in '{params.org_name}/{params.workspace_name}' ...")
         tfe_url_method = f"{TFE_URL_TRUNK}/workspaces/{workspace_id}/vars"
         payload = {
             "data": {
