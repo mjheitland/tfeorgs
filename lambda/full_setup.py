@@ -89,6 +89,8 @@ def lambda_handler(event, context):
         logger.info(data)
         if len(data) > 0:
             logger.info(f"TFE OAuth Client for '{org_name}/{workspace_name}' already exists.")
+            oauth_token_id = data[0]["relationships"]["oauth-tokens"]["data"][0]["id"]
+            logger.info(f"oauth_token_id: {oauth_token_id}")
         else:
             logger.info(f"TFE OAuth client for '{org_name}/{workspace_name}' does not exist")
             logger.info(f"Creating TFE OAuth client for '{org_name}/{workspace_name}' ...")
@@ -115,8 +117,8 @@ def lambda_handler(event, context):
                 raise Exception(f"Couldn't create OAuth client for '{org_name}/{workspace_name}': {response.json()}")
             data = response.json()['data']
             logger.info(data)
-            oauth_token_id = data["relationships"]["oauth-tokens"]["data"][0]["id"]
-            logger.info(oauth_token_id)
+            oauth_token_id = data[0]["relationships"]["oauth-tokens"]["data"][0]["id"]
+            logger.info(f"oauth_token_id: {oauth_token_id}")
             logger.info(f"... TFE OAuth client for '{org_name}/{workspace_name}' created.")
         return
 
