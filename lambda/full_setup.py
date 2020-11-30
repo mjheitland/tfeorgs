@@ -26,6 +26,9 @@ def lambda_handler(event, context):
         logger.info(f"user_email = '{user_email}'")
         workspace_name = event["workspace_name"]
         logger.info(f"workspace_name = '{workspace_name}'")
+        repo_name = event["repo_name"]
+        logger.info(f"repo_name = '{repo_name}'")
+        
         tfe_api_token = os.environ['TFE_API_TOKEN']
         logger.info(f"tfe_api_token: '{tfe_api_token[:10]}...'")
         ghe_api_token = os.environ['GHE_API_TOKEN'] # i.e. GHE Personal Access Token
@@ -110,6 +113,10 @@ def lambda_handler(event, context):
             logger.info(response.json())
             if response.status_code != HTTP_CREATED:
                 raise Exception(f"Couldn't create OAuth client for '{org_name}/{workspace_name}': {response.json()}")
+            data = response.json()['data']
+            logger.info(data)
+            oauth_token_id = data["relationships"]["oauth-tokens"]["data"][0]["id"]
+            logger.info(oauth_token_id)
             logger.info(f"... TFE OAuth client for '{org_name}/{workspace_name}' created.")
         return
 
@@ -136,8 +143,8 @@ def lambda_handler(event, context):
                         "terraform_version": TF_VERSION,
                         "working-directory": "",
                         "vcs-repo": {
-                            "identifier": "mjheitland/tfeorgs",
-                            "oauth-token-id": "",
+                            "identifier": repo_name,
+                            "oauth-token-id": oauth_token_id,
                             "ingress_submodules": True,
                             "branch": "",
                             "default-branch": true

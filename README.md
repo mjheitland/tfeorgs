@@ -31,7 +31,8 @@ Test event for full_setup lambda:
 {
   "org_name": "mjhorg0",
   "user_email": "mjheitland@gmail.com",
-  "workspace_name": "dev"
+  "workspace_name": "dev",
+  "repo_name": "mjheitland/tfeorgs"
 }
 ```
 
