@@ -22,6 +22,11 @@ variable "TFE_API_TOKEN" {
   description = "TFE API Token is passed from TFE environment variable TF_VAR_TFE_API_TOKEN to allow lambda to access TFE" 
 }
 
+variable "GHE_API_TOKEN" { 
+  type = string
+  description = "GHE API Token is passed from TFE environment variable TF_VAR_GHE_API_TOKEN to allow lambda to access GHE" 
+}
+
 #-------------------
 # Roles and Policies
 #-------------------
@@ -277,6 +282,7 @@ resource "aws_lambda_function" "full_setup" {
       "account_id"    = local.account
       "region"        = local.region
       "TFE_API_TOKEN" = var.TFE_API_TOKEN
+      "GHE_API_TOKEN" = var.GHE_API_TOKEN
     }
   }
 
