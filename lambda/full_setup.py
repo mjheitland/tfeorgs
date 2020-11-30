@@ -101,6 +101,42 @@ def lambda_handler(event, context):
             )
         )
 
+        create_workspace_variable(
+            params,
+            workspace_id,
+            TfeVariable(
+                'AWS_DEFAULT_REGION',
+                os.environ['AWS_REGION'],
+                'AWS default region',
+                False,
+                False
+            )
+        )
+
+        create_workspace_variable(
+            params,
+            workspace_id,
+            TfeVariable(
+                'AWS_ACCESS_KEY_ID',
+                os.environ['AWS_ACCESS_KEY_ID'],
+                'AWS access key',
+                False,
+                False
+            )
+        )
+
+        create_workspace_variable(
+            params,
+            workspace_id,
+            TfeVariable(
+                'AWS_SECRET_ACCESS_KEY',
+                os.environ['AWS_SECRET_ACCESS_KEY'],
+                'AWS secret key',
+                False,
+                True
+            )
+        )
+
         logger.info("... finishing full_setup.")
 
     except ClientError as ex:
