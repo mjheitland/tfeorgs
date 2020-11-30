@@ -249,7 +249,7 @@ def create_workspace(params, oauth_token_id):
                 f"Couldn't create worksapce '{params.org_name}/{params.workspace_name}': {response.json()}")
         workspace_id = response.json()["data"]["id"]
         logger.info(f"workspace_id: {workspace_id}")
-        logger.info(f"... TFE org '{params.org_name}/{params.workspace_name}' created.")
+        logger.info(f"... TFE workspace '{params.org_name}/{params.workspace_name}' created.")
     return workspace_id
 
 
