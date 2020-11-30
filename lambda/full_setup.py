@@ -147,7 +147,7 @@ def lambda_handler(event, context):
             params,
             workspace_id,
             TfeVariable(
-                'COPY_AWS_ACCESS_KEY_ID',
+                'TF_VAR_COPY_AWS_ACCESS_KEY_ID',
                 os.environ['COPY_AWS_ACCESS_KEY_ID'],
                 'AWS secret key',
                 False,
@@ -160,7 +160,7 @@ def lambda_handler(event, context):
             params,
             workspace_id,
             TfeVariable(
-                'COPY_AWS_SECRET_ACCESS_KEY',
+                'TF_VAR_COPY_AWS_SECRET_ACCESS_KEY',
                 os.environ['COPY_AWS_SECRET_ACCESS_KEY'],
                 'AWS secret key',
                 False,
