@@ -44,10 +44,10 @@ class TfeVariable():
     '''Helper class for passing external parameters to methods to avoid too-many-parameters-warning'''
     #pylint: disable=too-few-public-methods
     #pylint: disable=too-many-arguments
-    def __init__(self, var_key, var_value, var_description, hcl, sensitive, category) -> None:
-        self.var_key            = var_key
-        self.var_value          = var_value
-        self.var_description    = var_description
+    def __init__(self, key, value, description, hcl, sensitive, category) -> None:
+        self.key            = key
+        self.value          = value
+        self.description    = description
         self.hcl                = hcl       # HCL type, e.g. list
         self.sensitive          = sensitive # sensitive values get encrypted
         self.category           = category  # either "terraform" or 'env'
@@ -308,26 +308,26 @@ def create_workspace_variable(params, workspace_id, tfe_var):
         raise Exception(
             f"Get var call failed for workspace '{params.org_name}/{params.workspace_name}': {response.json()}")
     data = response.json()["data"]
-    found_var_key = False
+    key_found = False
     if len(data) > 0:
         for data_item in data:
-            if data_item['attributes']['key'] == tfe_var.var_key:
-                found_var_key = True
+            if data_item['attributes']['key'] == tfe_var.key:
+                key_found = True
                 break
-    if found_var_key:
-        logger.info(f"Variable '{tfe_var.var_key}' does already exist in '{params.org_name}/{params.workspace_name}'")
+    if key_found:
+        logger.info(f"Variable '{tfe_var.key}' does already exist in '{params.org_name}/{params.workspace_name}'")
     else:
-        logger.info(f"Variable '{tfe_var.var_key}' does not exist in '{params.org_name}/{params.workspace_name}'")
-        logger.info(f"Creating TFE workspace variable '{tfe_var.var_key}' in '{params.org_name}/{params.workspace_name}' ...")
+        logger.info(f"Variable '{tfe_var.key}' does not exist in '{params.org_name}/{params.workspace_name}'")
+        logger.info(f"Creating TFE workspace variable '{tfe_var.key}' in '{params.org_name}/{params.workspace_name}' ...")
         tfe_url_method = f"{TFE_URL_TRUNK}/workspaces/{workspace_id}/vars"
         payload = {
             "data": {
                 "type":"vars",
                 "attributes": {
-                "key":tfe_var.var_key,
-                "value":tfe_var.var_value,
-                "description":tfe_var.var_description,
-                "category":tfe_var.var_category,
+                "key":tfe_var.key,
+                "value":tfe_var.value,
+                "description":tfe_var.description,
+                "category":tfe_var.category,
                 "hcl":tfe_var.hcl,
                 "sensitive":tfe_var.sensitive
                 }
@@ -342,5 +342,5 @@ def create_workspace_variable(params, workspace_id, tfe_var):
         logger.info(response.json())
         if response.status_code != HTTP_CREATED:
             raise Exception(
-                f"Couldn't create '{tfe_var.var_key}' in '{params.org_name}/{params.workspace_name}': {response.json()}")
-        logger.info(f"... variable '{tfe_var.var_key}' in '{params.org_name}/{params.workspace_name}' created.")
+                f"Couldn't create '{tfe_var.key}' in '{params.org_name}/{params.workspace_name}': {response.json()}")
+        logger.info(f"... variable '{tfe_var.key}' in '{params.org_name}/{params.workspace_name}' created.")
