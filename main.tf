@@ -272,7 +272,7 @@ resource "aws_lambda_function" "full_setup" {
   role              = aws_iam_role.lambda_logging.arn
   handler           = "full_setup.lambda_handler"
   runtime           = "python3.8"
-  description       = "A function to create a TFE org."
+  description       = "A function to create a TFE org with a workspace connected to GHE source repo."
   source_code_hash  = data.archive_file.full_setup.output_base64sha256
   timeout           = 30
   layers            = [aws_lambda_layer_version.my_lambda_layer.arn]
