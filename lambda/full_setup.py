@@ -122,7 +122,7 @@ def lambda_handler(event, context):
             workspace_id,
             TfeVariable(
                 'AWS_ACCESS_KEY_ID',
-                os.environ['AWS_ACCESS_KEY_ID'],
+                os.environ['COPY_AWS_ACCESS_KEY_ID'],
                 'AWS access key',
                 False,
                 False,
@@ -135,7 +135,33 @@ def lambda_handler(event, context):
             workspace_id,
             TfeVariable(
                 'AWS_SECRET_ACCESS_KEY',
-                os.environ['AWS_SECRET_ACCESS_KEY'],
+                os.environ['COPY_AWS_SECRET_ACCESS_KEY'],
+                'AWS secret key',
+                False,
+                True,
+                'env'
+            )
+        )
+
+        create_workspace_variable(
+            params,
+            workspace_id,
+            TfeVariable(
+                'COPY_AWS_ACCESS_KEY_ID',
+                os.environ['COPY_AWS_ACCESS_KEY_ID'],
+                'AWS secret key',
+                False,
+                False,
+                'env'
+            )
+        )
+
+        create_workspace_variable(
+            params,
+            workspace_id,
+            TfeVariable(
+                'COPY_AWS_SECRET_ACCESS_KEY',
+                os.environ['COPY_AWS_SECRET_ACCESS_KEY'],
                 'AWS secret key',
                 False,
                 True,

@@ -27,6 +27,17 @@ variable "GHE_API_TOKEN" {
   description = "GHE API Token is passed from TFE environment variable TF_VAR_GHE_API_TOKEN to allow lambda to access GHE" 
 }
 
+variable "COPY_AWS_ACCESS_KEY_ID" { 
+  type = string
+  description = "Copy of AWS access key (needed to pass it as an environment variable to lambda)" 
+}
+
+variable "COPY_AWS_SECRET_ACCESS_KEY" { 
+  type = string
+  description = "Copy of AWS secret key (needed to pass it as an environment variable to lambda)" 
+}
+
+
 #-------------------
 # Roles and Policies
 #-------------------
@@ -279,10 +290,12 @@ resource "aws_lambda_function" "full_setup" {
 
   environment {
     variables = {
-      "account_id"    = local.account
-      "region"        = local.region
-      "TFE_API_TOKEN" = var.TFE_API_TOKEN
-      "GHE_API_TOKEN" = var.GHE_API_TOKEN
+      "account_id"                  = local.account
+      "region"                      = local.region
+      "TFE_API_TOKEN"               = var.TFE_API_TOKEN
+      "GHE_API_TOKEN"               = var.GHE_API_TOKEN
+      "COPY_AWS_ACCESS_KEY_ID"      = var.COPY_AWS_ACCESS_KEY_ID
+      "COPY_AWS_SECRET_ACCESS_KEY"  = var.COPY_AWS_SECRET_ACCESS_KEY
     }
   }
 
