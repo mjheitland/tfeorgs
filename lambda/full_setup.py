@@ -117,10 +117,9 @@ def lambda_handler(event, context):
                 raise Exception(f"Couldn't create OAuth client for '{org_name}/{workspace_name}': {response.json()}")
             data = response.json()['data']
             logger.info(data)
-            oauth_token_id = data[0]["relationships"]["oauth-tokens"]["data"][0]["id"]
+            oauth_token_id = data["relationships"]["oauth-tokens"]["data"][0]["id"]
             logger.info(f"oauth_token_id: {oauth_token_id}")
             logger.info(f"... TFE OAuth client for '{org_name}/{workspace_name}' created.")
-        return
 
         # create workspace if it does not exist
         tfe_url_method = f"{TFE_URL_TRUNK}/organizations/{org_name}/workspaces/{workspace_name}"
@@ -149,7 +148,7 @@ def lambda_handler(event, context):
                             "oauth-token-id": oauth_token_id,
                             "ingress_submodules": True,
                             "branch": "",
-                            "default-branch": true
+                            "default-branch": True
                         }
                     },
                     "type": "workspaces"
