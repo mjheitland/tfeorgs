@@ -81,7 +81,7 @@ def lambda_handler(event, context):
             params,
             workspace_id,
             TfeVariable(
-                'TFE_API_TOKEN',
+                'TF_VAR_TFE_API_TOKEN',
                 params.tfe_api_token,
                 'Terraform API token',
                 False,
@@ -93,7 +93,7 @@ def lambda_handler(event, context):
             params,
             workspace_id,
             TfeVariable(
-                'GHE_API_TOKEN',
+                'TF_VAR_GHE_API_TOKEN',
                 params.ghe_api_token,
                 'GHE API token',
                 False,
