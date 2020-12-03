@@ -14,7 +14,7 @@
          "key":"None",
          "secret":"None",
          "rsa-public-key":"None",
-         "tfvcs":False
+         "tfvcs":false
       },
       "relationships":{
          "organization":{
