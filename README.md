@@ -116,6 +116,50 @@ curl \
   --header "Content-Type: application/vnd.api+json" \
   --request GET \
   https://app.terraform.io/api/v2/organizations/mjhorg0/oauth-clients
+
+Example output:
+  [
+    {
+        "id":"oc-vRxtmjsVLfEyZRE8",
+        "type":"oauth-clients",
+        "attributes":{
+          "name":"None",
+          "created-at":"2020-12-03T09:21:52.376Z",
+          "callback-url":"https://app.terraform.io/auth/bb300bcd-2c7c-4efb-9836-95f83010bea6/callback",
+          "connect-path":"/auth/bb300bcd-2c7c-4efb-9836-95f83010bea6?organization_id=223447",
+          "service-provider":"github",
+          "service-provider-display-name":"GitHub",
+          "http-url":"https://github.com",
+          "api-url":"https://api.github.com",
+          "key":"None",
+          "secret":"None",
+          "rsa-public-key":"None",
+          "tfvcs":False
+        },
+        "relationships":{
+          "organization":{
+              "data":{
+                "id":"mjhorg0",
+                "type":"organizations"
+              },
+              "links":{
+                "related":"/api/v2/organizations/mjhorg0"
+              }
+          },
+          "oauth-tokens":{
+              "data":[
+                {
+                    "id":"ot-ugRPSLQKHenL6bbL",
+                    "type":"oauth-tokens"
+                }
+              ],
+              "links":{
+                "related":"/api/v2/oauth-clients/oc-vRxtmjsVLfEyZRE8/oauth-tokens"
+              }
+          }
+        }
+    }
+  ]
 ```
 
 ### TFE Workspace
