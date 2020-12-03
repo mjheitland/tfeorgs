@@ -77,9 +77,9 @@ def lambda_handler(event, context):
 
         create_org(params)
 
-        oauth_token_id = create_oauth_client(params)
+        tfe_vcs_token_id = get_tfe_vcs_token_id (params)
 
-        workspace_id = create_workspace(params, oauth_token_id)
+        workspace_id = create_workspace(params, tfe_vcs_token_id)
 
         create_workspace_variable(
             params,
@@ -219,7 +219,7 @@ def create_org(params):
         logger.info(f"... TFE org '{params.org_name}' created.")
 
 
-def create_oauth_client(params):
+def get_tfe_vcs_token_id (params):
     '''create OAuth client if it does not exist'''
     tfe_url_method = f"{TFE_URL_TRUNK}/organizations/{params.org_name}/oauth-clients"
     response = requests.get(
@@ -233,44 +233,51 @@ def create_oauth_client(params):
             f"Get TFE OAuth clients call failed for workspace '{params.org_name}': {response.json()}")
     data = response.json()['data']
     logger.info(data)
-    if len(data) > 0:
+    if data:
         logger.info(f"TFE OAuth Client for '{params.org_name}' already exists.")
-        oauth_token_id = data[0]["relationships"]["oauth-tokens"]["data"][0]["id"]
-        logger.info(f"oauth_token_id: {oauth_token_id}")
+        tfe_vcs_token_id = data[0]["relationships"]["oauth-tokens"]["data"][0]["id"]
+        logger.info(f"tfe_vcs_token_id: {tfe_vcs_token_id}")
     else:
         logger.info(f"TFE OAuth client for '{params.org_name}' does not exist")
-        logger.info(f"Creating TFE OAuth client for '{params.org_name}' ...")
-        tfe_url_method = f"{TFE_URL_TRUNK}/organizations/{params.org_name}/oauth-clients"
-        payload = {
-            "data": {
-                "type": "oauth-clients",
-                "attributes": {
-                    "service-provider": "github",
-                    "http-url": VCS_HTTP_URL,
-                    "api-url": VCS_API_URL,
-                    "oauth-token-string": params.ghe_api_token
-                }
+        tfe_vcs_token_id = create_tfe_vcs_token_id(params)
+        logger.info(f"... TFE OAuth client for '{params.org_name}' created.")
+
+    return tfe_vcs_token_id
+
+
+def create_tfe_vcs_token_id(params):
+    """create a new Terraform OAutch client (i.e. connection between TFE and GHE)"""
+    logger.info(f"Creating TFE OAuth client for '{params.org_name}' ...")
+    tfe_url_method = f"{TFE_URL_TRUNK}/organizations/{params.org_name}/oauth-clients"
+    payload = {
+        "data": {
+            "type": "oauth-clients",
+            "attributes": {
+                "service-provider": "github",
+                "http-url": VCS_HTTP_URL,
+                "api-url": VCS_API_URL,
+                "oauth-token-string": params.ghe_api_token
             }
         }
-        response = requests.post(
-            tfe_url_method,
-            headers = params.headers,
-            data = json.dumps(payload),
-            verify = VERIFY_SSL)
-        logger.info(f"status_code: {response.status_code}")
-        logger.info(response.json())
-        if response.status_code != HTTP_CREATED:
-            raise Exception(
-                f"Couldn't create OAuth client for '{params.org_name}': {response.json()}")
-        data = response.json()['data']
-        logger.info(data)
-        oauth_token_id = data["relationships"]["oauth-tokens"]["data"][0]["id"]
-        logger.info(f"oauth_token_id: {oauth_token_id}")
-        logger.info(f"... TFE OAuth client for '{params.org_name}' created.")
-    return oauth_token_id
+    }
+    response = requests.post(
+        tfe_url_method,
+        headers = params.headers,
+        data = json.dumps(payload),
+        verify = VERIFY_SSL)
+    logger.info(f"status_code: {response.status_code}")
+    logger.info(response.json())
+    if response.status_code != HTTP_CREATED:
+        raise Exception(
+            f"Couldn't create OAuth client for '{params.org_name}': {response.json()}")
+    data = response.json()['data']
+    logger.info(data)
+    tfe_vcs_token_id = data["relationships"]["oauth-tokens"]["data"][0]["id"]
+    logger.info(f"tfe_vcs_token_id: {tfe_vcs_token_id}")
+    return tfe_vcs_token_id
 
 
-def create_workspace(params, oauth_token_id):
+def create_workspace(params, tfe_vcs_token_id):
     '''create workspace if it does not exist'''
     tfe_url_method = f"{TFE_URL_TRUNK}/organizations/{params.org_name}/workspaces/{params.workspace_name}"
     response = requests.get(
@@ -299,7 +306,7 @@ def create_workspace(params, oauth_token_id):
                     "working-directory": "",
                     "vcs-repo": {
                         "identifier": params.repo_name,
-                        "oauth-token-id": oauth_token_id,
+                        "oauth-token-id": tfe_vcs_token_id,
                         "ingress_submodules": True,
                         "branch": "",
                         "default-branch": True
