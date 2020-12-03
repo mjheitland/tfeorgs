@@ -9,11 +9,14 @@ import requests
 from botocore.exceptions import ClientError
 #from collections import namedtuple
 
-HTTP_OK         = 200
-HTTP_CREATED    = 201
-HTTP_NOT_FOUND  = 404
-TF_VERSION      = "0.13.5"
-TFE_URL_TRUNK   = 'https://app.terraform.io/api/v2'
+HTTP_OK = 200
+HTTP_CREATED = 201
+HTTP_NOT_FOUND = 404
+TF_VERSION = "0.13.5"
+TFE_URL_TRUNK = 'https://app.terraform.io/api/v2'
+VCS_HTTP_URL = "https://github.com" # https://1.2.3.4
+VCS_API_URL = "https://api.github.com" # https://1.2.3.4/api/v3
+VERIFY_SSL = True
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -185,7 +188,7 @@ def create_org(params):
     response = requests.get(
         f"{TFE_URL_TRUNK}/organizations/{params.org_name}",
         headers = params.headers,
-        verify = True)
+        verify = VERIFY_SSL)
     logger.info(f"status_code: {response.status_code}")
     logger.info(response.json())
     if response.status_code not in [HTTP_OK, HTTP_NOT_FOUND]:
@@ -208,7 +211,7 @@ def create_org(params):
             f"{TFE_URL_TRUNK}/organizations",
             headers = params.headers,
             data = json.dumps(payload),
-            verify = True)
+            verify = VERIFY_SSL)
         logger.info(f"status_code: {response.status_code}")
         logger.info(response.json())
         if response.status_code != HTTP_CREATED:
@@ -222,7 +225,7 @@ def create_oauth_client(params):
     response = requests.get(
         tfe_url_method,
         headers = params.headers,
-        verify = True)
+        verify = VERIFY_SSL)
     logger.info(f"status_code: {response.status_code}")
     logger.info(response.json())
     if response.status_code not in [HTTP_OK]:
@@ -243,8 +246,8 @@ def create_oauth_client(params):
                 "type": "oauth-clients",
                 "attributes": {
                     "service-provider": "github",
-                    "http-url": "https://github.com",
-                    "api-url": "https://api.github.com",
+                    "http-url": VCS_HTTP_URL,
+                    "api-url": VCS_API_URL,
                     "oauth-token-string": params.ghe_api_token
                 }
             }
@@ -253,7 +256,7 @@ def create_oauth_client(params):
             tfe_url_method,
             headers = params.headers,
             data = json.dumps(payload),
-            verify = True)
+            verify = VERIFY_SSL)
         logger.info(f"status_code: {response.status_code}")
         logger.info(response.json())
         if response.status_code != HTTP_CREATED:
@@ -273,7 +276,7 @@ def create_workspace(params, oauth_token_id):
     response = requests.get(
         tfe_url_method,
         headers = params.headers,
-        verify = True)
+        verify = VERIFY_SSL)
     logger.info(f"status_code: {response.status_code}")
     logger.info(response.json())
     workspace_id = ''
@@ -309,7 +312,7 @@ def create_workspace(params, oauth_token_id):
             tfe_url_method,
             headers = params.headers,
             data = json.dumps(payload),
-            verify = True)
+            verify = VERIFY_SSL)
         logger.info(f"status_code: {response.status_code}")
         logger.info(response.json())
         if response.status_code != HTTP_CREATED:
@@ -327,7 +330,7 @@ def create_workspace_variable(params, workspace_id, tfe_var):
     response = requests.get(
         tfe_url_method,
         headers = params.headers,
-        verify = True)
+        verify = VERIFY_SSL)
     logger.info(f"status_code: {response.status_code}")
     logger.info(response.json())
     if response.status_code not in [HTTP_OK]:
@@ -363,7 +366,7 @@ def create_workspace_variable(params, workspace_id, tfe_var):
             tfe_url_method,
             headers = params.headers,
             data = json.dumps(payload),
-            verify = True)
+            verify = VERIFY_SSL)
         logger.info(f"status_code: {response.status_code}")
         logger.info(response.json())
         if response.status_code != HTTP_CREATED:
